@@ -20,15 +20,15 @@ public class Cash {
     }
 
     private Note note;
-    private long quantity;
+    private long numberOfNotes;
 
     public Cash(Note note) {
         this(note, 0);
     }
 
-    public Cash(Note note, long quantity) {
+    public Cash(Note note, long numberOfNotes) {
         setNote(note);
-        setQuantity(quantity);
+        setNumberOfNotes(numberOfNotes);
     }
 
     public Note getNote() {
@@ -40,12 +40,12 @@ public class Cash {
         return this;
     }
 
-    public long getQuantity() {
-        return quantity;
+    public long getNumberOfNotes() {
+        return numberOfNotes;
     }
 
-    public Cash setQuantity(long quantity) {
-        this.quantity = quantity;
+    public Cash setNumberOfNotes(long number) {
+        this.numberOfNotes = number;
         return this;
     }
 
@@ -56,13 +56,13 @@ public class Cash {
 
         Cash cash = (Cash) o;
 
-        return quantity == cash.quantity && note == cash.note;
+        return numberOfNotes == cash.numberOfNotes && note == cash.note;
     }
 
     @Override
     public int hashCode() {
         int result = note.hashCode();
-        result = 31 * result + (int) (quantity ^ (quantity >>> 32));
+        result = 31 * result + (int) (numberOfNotes ^ (numberOfNotes >>> 32));
         return result;
     }
 
@@ -70,7 +70,7 @@ public class Cash {
     public String toString() {
         return "Cash{" +
                 "note=" + note +
-                ", quantity=" + quantity +
+                ", quantity=" + numberOfNotes +
                 '}';
     }
 }

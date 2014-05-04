@@ -19,6 +19,6 @@ public class CashTest {
     public void constructor() {
         Cash cash = new Cash(Note.FIFTY, 20);
         assertThat(cash.getNote()).isEqualTo(Note.FIFTY);
-        assertThat(cash.getQuantity()).isEqualTo(20);
+        assertThat(cash.getNumberOfNotes()).isEqualTo(20);
     }
 }

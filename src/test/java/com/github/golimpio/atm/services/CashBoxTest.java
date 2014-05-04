@@ -2,15 +2,9 @@ package com.github.golimpio.atm.services;
 
 import com.github.golimpio.atm.model.Cash;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import javax.ws.rs.WebApplicationException;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import static com.github.golimpio.atm.model.Cash.Note;
 import static com.github.golimpio.atm.services.CashBox.getCashBox;
@@ -34,7 +28,7 @@ public class CashBoxTest {
     }
 
     @Test
-    public void add_shouldAddMoneyToCashBox_whenBoxIsEmpty() {
+    public void add_shouldAddMoneyToCashBox_whenBoxIsEmpty() throws AtmException {
         ArrayList<Cash> money = newArrayList(cash(Note.TWENTY, 10), cash(Note.FIFTY, 20));
 
         getCashBox().initialise();
@@ -45,7 +39,7 @@ public class CashBoxTest {
     }
 
     @Test
-    public void add_shouldAddMoneyToCashBox_whenBoxIsNotEmpty() {
+    public void add_shouldAddMoneyToCashBox_whenBoxIsNotEmpty() throws AtmException {
         ArrayList<Cash> moneyOne = newArrayList(cash(Note.TWENTY, 10), cash(Note.FIFTY, 20));
         ArrayList<Cash> moneyTwo = newArrayList(cash(Note.FIVE, 30), cash(Note.HUNDRED, 5));
 
@@ -57,6 +51,36 @@ public class CashBoxTest {
         assertThat(getCashBox().sumInCash()).isEqualTo(20 * 10 + 50 * 20 + 5 * 30 + 100 * 5);
     }
 
+    @Test(expectedExceptions = AtmException.class)
+    public void add_shouldThrowException_whenQuantityIsNegative() throws AtmException {
+        ArrayList<Cash> money = newArrayList(cash(Note.TWENTY, 5), cash(Note.FIFTY, -1));
+
+        getCashBox().initialise();
+        getCashBox().add(money);
+
+        fail("Adding notes with negative quantity should have failed!");
+    }
+
+    @Test(expectedExceptions = AtmException.class)
+    public void add_shouldThrowException_whenQuantityIsZero() throws AtmException {
+        ArrayList<Cash> money = newArrayList(cash(Note.TWENTY, 0), cash(Note.FIFTY, 10));
+
+        getCashBox().initialise();
+        getCashBox().add(money);
+
+        fail("Adding notes with quantity equals to zero should have failed!");
+    }
+
+    @Test(expectedExceptions = AtmException.class)
+    public void add_shouldThrowException_whenQuantityIsBiggerThanMaxAllowed() throws AtmException {
+        ArrayList<Cash> money = newArrayList(cash(Note.TWENTY, CashBox.MAX_NOTES + 1), cash(Note.FIFTY, 10));
+
+        getCashBox().initialise();
+        getCashBox().add(money);
+
+        fail("Adding notes with quantity equals to zero should have failed!");
+    }
+
     @Test
     public void getMinimalWithdrawValue_shouldBeZero_whenThereIsNoMoney() {
         getCashBox().initialise();
@@ -65,7 +89,7 @@ public class CashBoxTest {
     }
 
     @Test
-    public void getMinimalWithdrawValue_shouldBeUpdated_afterLastWithdraw() {
+    public void getMinimalWithdrawValue_shouldBeUpdated_afterLastWithdraw() throws AtmException {
         ArrayList<Cash> money = newArrayList(cash(Note.TWENTY, 4), cash(Note.FIFTY, 1));
 
         getCashBox().initialise();
@@ -77,13 +101,43 @@ public class CashBoxTest {
     }
 
     @Test
-    public void getMultiples() {
+    public void getMultiples() throws AtmException {
         ArrayList<Cash> money = newArrayList(cash(Note.TWENTY, 10), cash(Note.FIFTY, 20));
 
         getCashBox().initialise();
         getCashBox().add(money);
 
         assertThat(getCashBox().getMultiples()).contains(20, 50);
+    }
+
+    @Test(expectedExceptions = AtmException.class)
+    public void withdraw_shouldThrowException_whenValueIsZero() throws AtmException {
+        getCashBox().withdraw(0);
+        fail("Withdraw a value equals to zero should have failed!");
+    }
+
+    @Test(expectedExceptions = AtmException.class)
+    public void withdraw_shouldThrowException_whenThereIsNoEnoughMoney() throws AtmException {
+        ArrayList<Cash> money = newArrayList(cash(Note.TWENTY, 4), cash(Note.FIFTY, 1));
+
+        getCashBox().initialise();
+        getCashBox().add(money);
+        assertThat(getCashBox().sumInCash()).isEqualTo(130);
+
+        getCashBox().withdraw(150);
+        fail("Withdraw when there is no enough money should have failed!");
+    }
+
+    @Test(expectedExceptions = AtmException.class)
+    public void withdraw_shouldThrowException_whenValueIsNotMultipleOfAvailableNotes() throws AtmException {
+        ArrayList<Cash> money = newArrayList(cash(Note.TWENTY, 10), cash(Note.FIFTY, 20));
+
+        getCashBox().initialise();
+        getCashBox().add(money);
+        assertThat(getCashBox().getMultiples()).contains(20, 50);
+
+        getCashBox().withdraw(30);
+        fail("Withdraw a value that is not multiple of available notes should have failed!");
     }
 
     private Cash cash(Note note, long quantity) {
