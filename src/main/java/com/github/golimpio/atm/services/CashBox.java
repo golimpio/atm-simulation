@@ -11,8 +11,6 @@ public enum CashBox {
 
     static final long MAX_NOTES = 100_000;
 
-//    private final AtomicLongMap<Cash.Note> box = AtomicLongMap.create();
-
     private Dispenser firstDispenser = null;
 
     ConcurrentHashMap<Cash.Note, Dispenser> box = new ConcurrentHashMap<>();
@@ -27,8 +25,8 @@ public enum CashBox {
         Dispenser previousDispenser = null;
 
         for (Cash.Note note : Cash.Note.values()) {
-            Dispenser dispenser = new Dispenser();
-            box.put(note, new Dispenser());
+            Dispenser dispenser = new Dispenser(note);
+            box.put(note, dispenser);
 
             if (previousDispenser == null) {
                 firstDispenser = dispenser;
@@ -73,7 +71,7 @@ public enum CashBox {
     public synchronized List<Cash> withdraw(long value) throws AtmException {
         validateWithdraw(value);
         firstDispenser.handle(value);
-
+        List<Cash> money = firstDispenser.dispense();
         return null;
     }
 
@@ -133,7 +131,7 @@ public enum CashBox {
     }
 
     public synchronized boolean hasEnoughCashFor(long value) {
-        return true;
+        return availableMoney() >= value;
     }
 
     public synchronized long sumInCash() {

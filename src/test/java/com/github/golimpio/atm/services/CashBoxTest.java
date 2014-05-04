@@ -15,11 +15,6 @@ import static com.google.common.collect.Lists.*;
 
 public class CashBoxTest {
 
-//    private static final ArrayList<Cash> NO_MONEY = new ArrayList<Cash>() {{
-//        for (Cash.Note note : Cash.Note.values())
-//            add(new Cash(note));
-//    }};
-
     @Test
     public void initialise_shouldZeroCashForAllNotes() {
         getCashBox().initialise();
@@ -89,7 +84,7 @@ public class CashBoxTest {
     }
 
     @Test
-    public void getMinimalWithdrawValue_shouldBeUpdated_afterLastWithdraw() throws AtmException {
+    public void getMinimalWithdrawValue_shouldBeUpdated_afterEachLastWithdraw() throws AtmException {
         ArrayList<Cash> money = newArrayList(cash(Note.TWENTY, 4), cash(Note.FIFTY, 1));
 
         getCashBox().initialise();
@@ -108,6 +103,26 @@ public class CashBoxTest {
         getCashBox().add(money);
 
         assertThat(getCashBox().getMultiples()).contains(20, 50);
+    }
+
+    @Test
+    public void hasEnoughCashFor_shouldReturnTrue_whenMoneyInTheBoxIsEnough() throws AtmException {
+        ArrayList<Cash> money = newArrayList(cash(Note.TWENTY, 10), cash(Note.FIFTY, 20));
+
+        getCashBox().initialise();
+        getCashBox().add(money);
+
+        assertThat(getCashBox().hasEnoughCashFor(400)).isTrue();
+    }
+
+    @Test
+    public void hasEnoughCashFor_shouldReturnFalse_whenMoneyInTheBoxIsNotEnough() throws AtmException {
+        ArrayList<Cash> money = newArrayList(cash(Note.TWENTY, 1), cash(Note.FIFTY, 1));
+
+        getCashBox().initialise();
+        getCashBox().add(money);
+
+        assertThat(getCashBox().hasEnoughCashFor(200)).isFalse();
     }
 
     @Test(expectedExceptions = AtmException.class)
@@ -138,6 +153,18 @@ public class CashBoxTest {
 
         getCashBox().withdraw(30);
         fail("Withdraw a value that is not multiple of available notes should have failed!");
+    }
+
+    @Test
+    public void withdraw_shouldUpdateAmountOfNotes() throws AtmException {
+        ArrayList<Cash> money = newArrayList(cash(Note.TWENTY, 10), cash(Note.FIFTY, 20));
+
+        getCashBox().initialise();
+        getCashBox().add(money);
+        assertThat(getCashBox().sumInCash()).isEqualTo(10 * 20 + 50 * 20);
+
+        getCashBox().withdraw(80);
+        assertThat(getCashBox().sumInCash()).isEqualTo(10 * 20 + 50 * 20 - 80);
     }
 
     private Cash cash(Note note, long quantity) {
