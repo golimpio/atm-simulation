@@ -23,25 +23,44 @@ class Dispenser {
      * @param value The total in cash to dispense (withdraw)
      * @return The amount/balance that couldn't be dispensed
      */
-    long handle(long value) throws AtmException {
+    long calculate(long value) throws AtmException {
         long balance = value;
         notesToDispense = 0;
 
         if (value >= note.getValue()) {
             notesToDispense = value / note.getValue();
-            if (notesToDispense > numberOfNotes.get()) {
-                notesToDispense = numberOfNotes.get();
-            }
-            balance = value - notesToDispense * note.getValue();
-            if (balance < 0)
-                throw new AtmException("Internal error: balance is negative for " + note);
-        }
+            while (notesToDispense > 0) {
+                if (notesToDispense > numberOfNotes.get()) {
+                    notesToDispense = numberOfNotes.get();
+                }
+                balance = value - notesToDispense * note.getValue();
+                if (balance < 0)
+                    throw new AtmException("Internal error: balance is negative for " + note);
+                if (balance == 0)
+                    break;
 
-        return (next != null) ? next.handle(balance) : balance;
+                long predeterminedBalance = predetermine(balance);
+                if (predeterminedBalance == 0)
+                    break;
+
+                notesToDispense--;
+                balance = value - notesToDispense * note.getValue();
+            }
+        }
+        return (next != null) ? next.calculate(balance) : balance;
     }
 
-    long predetermine() {
-        return 0;
+    long predetermine(long value) {
+        long balance = value;
+
+        if (value >= note.getValue()) {
+            long dispenseNotes = value / note.getValue();
+            if (dispenseNotes > numberOfNotes.get()) {
+                dispenseNotes = numberOfNotes.get();
+            }
+            balance = value - dispenseNotes * note.getValue();
+        }
+        return (next != null) ? next.predetermine(balance) : balance;
     }
 
     List<Cash> dispense() {

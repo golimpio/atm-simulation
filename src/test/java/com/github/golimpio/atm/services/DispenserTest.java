@@ -13,36 +13,36 @@ import static org.mockito.Mockito.verify;
 public class DispenserTest {
 
     @Test
-    public void handle_shouldReturnTheCorrectBalance() throws AtmException {
+    public void calculate_shouldReturnTheCorrectBalance() throws AtmException {
         Dispenser dispenser = new Dispenser(Note.FIFTY);
         dispenser.addNotes(4);
         assertThat(dispenser.getNumberOfNotes()).isEqualTo(4);
 
-        long balance = dispenser.handle(120);
+        long balance = dispenser.calculate(120);
 
         assertThat(balance).isEqualTo(20);
     }
 
     @Test
-    public void handle_willNotUseNotes_whenValueIsSmallerThanNote() throws AtmException {
+    public void calculate_willNotUseNotes_whenValueIsSmallerThanNote() throws AtmException {
         Dispenser dispenser = new Dispenser(Note.FIFTY);
         dispenser.addNotes(2);
 
-        long balance = dispenser.handle(40);
+        long balance = dispenser.calculate(40);
 
         assertThat(balance).isEqualTo(40);
     }
 
     @Test
-    public void handle_shouldCallTheNextHandleInChain() throws AtmException {
+    public void calculate_shouldCallTheNextHandleInChain() throws AtmException {
         Dispenser next = mock(Dispenser.class);
         Dispenser dispenser = new Dispenser(Note.TWENTY);
 
         dispenser.setNextHandle(next);
         dispenser.addNotes(2);
-        dispenser.handle(30);
+        dispenser.calculate(30);
 
-        verify(next).handle(10);
+        verify(next).calculate(10);
     }
 
     @Test
@@ -51,7 +51,7 @@ public class DispenserTest {
         dispenser.addNotes(3);
         assertThat(dispenser.getNumberOfNotes()).isEqualTo(3);
 
-        dispenser.handle(120);
+        dispenser.calculate(120);
         List<Cash> moneyDispensed = dispenser.dispense();
 
         assertThat(dispenser.getNumberOfNotes()).isEqualTo(1);
@@ -67,7 +67,7 @@ public class DispenserTest {
         dispenser.addNotes(3);
         assertThat(dispenser.getNumberOfNotes()).isEqualTo(3);
 
-        dispenser.handle(120);
+        dispenser.calculate(120);
         dispenser.dispense();
 
         verify(next).dispense();

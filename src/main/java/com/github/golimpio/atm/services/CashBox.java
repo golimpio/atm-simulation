@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public enum CashBox {
     INSTANCE;
-    public static CashBox getCashBox() { return INSTANCE; }
+    public static CashBox cashBox() { return INSTANCE; }
 
     static final long MAX_NOTES = 100_000;
 
@@ -24,7 +24,8 @@ public enum CashBox {
 
         Dispenser previousDispenser = null;
 
-        for (Cash.Note note : Cash.Note.values()) {
+        for (int i = Cash.Note.values().length - 1; i >= 0 ; i--) {
+            Cash.Note note = Cash.Note.values()[i];
             Dispenser dispenser = new Dispenser(note);
             box.put(note, dispenser);
 
@@ -70,9 +71,15 @@ public enum CashBox {
 
     public synchronized List<Cash> withdraw(long value) throws AtmException {
         validateWithdraw(value);
-        firstDispenser.handle(value);
-        List<Cash> money = firstDispenser.dispense();
-        return null;
+        long balance = firstDispenser.calculate(value);
+        if (balance > 0) {
+            throw new AtmException("The combination of notes available didn't satisfy your request, " +
+                                   "please select another amount and try it again.");
+        }
+
+        // The withdraw is done in two steps (calculate + dispense),
+        // so if anything goes wrong on the first step, the number of notes will not be corrupted
+        return firstDispenser.dispense();
     }
 
     private void validateWithdraw(long value) throws AtmException {
@@ -82,43 +89,16 @@ public enum CashBox {
             throw new AtmException("Internal error: dispensers were not initialised correctly.");
         if (value > availableMoney())
             throw new AtmException("There is no enough money to fulfill the request.");
-
-        boolean isMultiple = false;
-        List<Integer> multiples = multiples();
-        for (int multiple: multiples) {
-            if (value % multiple == 0) {
-                isMultiple = true;
-                break;
-            }
-        }
-        if (!isMultiple)
-            throw new AtmException("Value is not multiple of available notes.");
+        if (!isMultiple(value))
+            throw new AtmException("Value is not multiple or a combination of available notes.");
     }
 
-    public synchronized List<Integer> getMultiples() {
-        return multiples();
-    }
-
-    private List<Integer> multiples() {
-        ArrayList<Integer> multiples = new ArrayList<>();
+    private boolean isMultiple(long value) {
         for (Cash.Note note : Cash.Note.values()) {
-            Dispenser dispenser = box.get(note);
-            if (dispenser.getNumberOfNotes() > 0) {
-                int noteValue = note.getValue();
-                if (multiples.isEmpty()) {
-                    multiples.add(note.getValue());
-                }
-                else {
-                    for (int multiple : multiples) {
-                        if (noteValue % multiple != 0) {
-                            multiples.add(noteValue);
-                            break;
-                        }
-                    }
-                }
-            }
+            if (value % note.getValue() == 0)
+                return true;
         }
-        return multiples;
+        return false;
     }
 
     public synchronized long getMinimalWithdrawValue() {
