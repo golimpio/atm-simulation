@@ -12,7 +12,7 @@ An application that simulates the backend logic of a cash dispensing *Automatic 
 
 
 ### Requirements
-[CLick here for reading the instructions and requirements](https://github.com/golimpio/atm-simulation/blob/master/INSTRUCTIONS.md)
+[Click here for reading the instructions and requirements](https://github.com/golimpio/atm-simulation/blob/master/INSTRUCTIONS.md)
 
 
 ## Application
@@ -42,31 +42,31 @@ Test:
 
 The design pattern used as a base for solving the cash dispenser problem was the *Chain of Responsibility*.
 
-The typical implementation of a *Chain of Resposibility* for this specific problem (ATM simulation) has a flaw, mainly because it doesn't care if the request will be fully satisfied at the time the last object in the chain handles the request.
+The typical implementation of a *Chain of Responsibility* for this specific problem (ATM simulation) has a flaw, mainly because it doesn't care if the request will be fully satisfied at the time the last object in the chain handles it.
 
 For example:
 
-Assuming that the ATM has notes of $20 and $50 only (and it has enough to fulfil the withdraw):
+Assuming that the ATM has notes of $20 and $50 only (and it has enough money to fulfil the withdraw):
 
 - We want to withdraw $80 
 - There are two cash dispensers, one for $50 and other for $20 bills.
-- The first object will dispense 1 X $50
-- The second and last object will dispense 1 X $20
-- There is no object in the chain to handle the $10 balance left and it will make the request fail
+- The first one will dispense 1 X $50
+- The second (and last one) will dispense 1 X $20
+- $70 was dispensed so far
+- There is no object in the chain to handle the $10 balance left, making this request to fail
 
-If the chain start with the $20 dispenser, it should work, but then another problem is introduced, because the small bills will finish a lot faster, creating an additional cost of constantly feeding the ATM.
+It would work if the chain start with the $20 dispenser, but then another problem is introduced, because the small bills will finish a lot faster, creating an additional cost of constantly feeding the ATM.
 
-The proposed solution, is still using this design pattern, but it will check if the last object in the chain will satisfy the request (the balance must be zero):
+The proposed solution is still using this design pattern as a base for its implementation, but it will check if the last object in the chain will satisfy the request before it handles the request to the next one:
 [Dispenser.java](https://github.com/golimpio/atm-simulation/blob/master/src/main/java/com/github/golimpio/atm/services/Dispenser.java)
 
 
 ### Target platforms
 
 - Mac OSX (tested on 10.9 Mavericks)
+- Linux (tested with OpenJDK 7)
 - [Heroku](https://www.heroku.com/)
 - Java stand alone application
-
-It should work on Linux, but it wasn't tested with OpenJDK.
 
 
 ### Minimum requirements
@@ -133,7 +133,7 @@ or
 	curl -X POST -H "Content-Type: application/json" http://localhost:8080/services/init/clear
 
 
-The **response** will be a HTTP status OK if it successed or other status if it failed.
+The **response** will be a HTTP status OK if it succeed or other status if it failed.
 
 
 #### Add money to the ATM (3)
@@ -154,7 +154,7 @@ Allowed notes:
 - FIFTY
 - HUNDRED
 
-The **response** will be a HTTP status OK if it successed or other status if it failed.
+The **response** will be a HTTP status OK if it succeed or other status if it failed.
 
 
 #### Withdraw (5)
