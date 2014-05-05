@@ -104,7 +104,12 @@ The simplest way to access the service API from the command line is via CURL (a 
 
 **Request:**
 
+	curl -X POST -H "Content-Type: application/json" http://atm-simulation-exercise.herokuapp.com/services/init/clear
+	
+or
+
 	curl -X POST -H "Content-Type: application/json" http://localhost:8080/services/init/clear
+
 
 The **response** will be a HTTP status OK if it successed or other status if it failed.
 
@@ -112,6 +117,10 @@ The **response** will be a HTTP status OK if it successed or other status if it 
 #### Add money to the ATM (3)
 
 **Request:**
+
+	curl -X POST -H "Content-Type: application/json" -d $'[ { "note":"TWENTY", "numberOfNotes":150 }, { "note":"FIFTY", "numberOfNotes":40 } ]' http://atm-simulation-exercise.herokuapp.com/services/init/add
+
+or
 
 	curl -X POST -H "Content-Type: application/json" -d $'[ { "note":"TWENTY", "numberOfNotes":150 }, { "note":"FIFTY", "numberOfNotes":40 } ]' http://localhost:8080/services/init/add
 
@@ -127,6 +136,10 @@ The **response** will be a HTTP status OK if it successed or other status if it 
 
 
 #### Withdraw (5)
+
+	curl -X GET -H "Content-Type: text/plain" -d $'90' http://atm-simulation-exercise.herokuapp.com/services/withdraw/
+
+or
 
 	curl -X GET -H "Content-Type: text/plain" -d $'90' http://localhost:8080/services/withdraw/
 
@@ -148,6 +161,10 @@ The **response** will be a HTTP status OK if it successed or other status if it 
 
 **Request:**
 
+	curl -X GET -H "Content-Type: application/json" http://atm-simulation-exercise.herokuapp.com/services/withdraw/minimum
+	
+or
+
 	curl -X GET -H "Content-Type: application/json" http://localhost:8080/services/withdraw/minimum
 
 **Response:**
@@ -159,6 +176,10 @@ The **response** will be a HTTP status OK if it successed or other status if it 
 
 **Request:**
 
+	curl -X GET -H "Content-Type: application/json" http://atm-simulation-exercise.herokuapp.com/services/withdraw/maximum
+
+or
+
 	curl -X GET -H "Content-Type: application/json" http://localhost:8080/services/withdraw/maximum
 
 **Response:**
@@ -169,6 +190,10 @@ The **response** will be a HTTP status OK if it successed or other status if it 
 #### Retrieve the amount available for withdraw (8)
 
 **Request:**
+
+	curl -X GET -H "Content-Type: application/json" http://atm-simulation-exercise.herokuapp.com/services/monitor/money
+
+or
 
 	curl -X GET -H "Content-Type: application/json" http://localhost:8080/services/monitor/money
 
