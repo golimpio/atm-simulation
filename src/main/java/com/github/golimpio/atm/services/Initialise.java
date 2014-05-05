@@ -53,4 +53,3 @@ public class Initialise {
         return Response.status(Status.OK).build();
     }
 }
-

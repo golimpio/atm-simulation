@@ -13,14 +13,14 @@ import static org.mockito.Mockito.verify;
 public class DispenserTest {
 
     @Test
-    public void calculate_shouldReturnTheCorrectBalance() throws AtmException {
+    public void calculate_shouldReturnFullBalance_whenItCanNotFulfullTheRequest() throws AtmException {
         Dispenser dispenser = new Dispenser(Note.FIFTY);
         dispenser.addNotes(4);
         assertThat(dispenser.getNumberOfNotes()).isEqualTo(4);
 
         long balance = dispenser.calculate(120);
 
-        assertThat(balance).isEqualTo(20);
+        assertThat(balance).isEqualTo(120);
     }
 
     @Test
@@ -51,11 +51,24 @@ public class DispenserTest {
         dispenser.addNotes(3);
         assertThat(dispenser.getNumberOfNotes()).isEqualTo(3);
 
-        dispenser.calculate(120);
+        dispenser.calculate(100);
         List<Cash> moneyDispensed = dispenser.dispense();
 
         assertThat(dispenser.getNumberOfNotes()).isEqualTo(1);
-        assertThat(moneyDispensed).contains(new Cash(Note.FIFTY, 2), new Cash(Note.TWENTY, 1));
+        assertThat(moneyDispensed).contains(new Cash(Note.FIFTY, 2));
+    }
+
+    @Test
+    public void dispense_shouldNotChangeTheNumberOfNotes_whenItCanNotFullfilTheRequest() throws AtmException {
+        Dispenser dispenser = new Dispenser(Note.FIFTY);
+        dispenser.addNotes(3);
+        assertThat(dispenser.getNumberOfNotes()).isEqualTo(3);
+
+        dispenser.calculate(120);
+        List<Cash> moneyDispensed = dispenser.dispense();
+
+        assertThat(dispenser.getNumberOfNotes()).isEqualTo(3);
+        assertThat(moneyDispensed).isEmpty();
     }
 
     @Test

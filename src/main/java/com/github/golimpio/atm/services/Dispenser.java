@@ -89,8 +89,4 @@ class Dispenser {
     long addNotes(long quantity) {
         return numberOfNotes.addAndGet(quantity);
     }
-//
-//    long getNotesToDispense() {
-//        return notesToDispense;
-//    }
 }

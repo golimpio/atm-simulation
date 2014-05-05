@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 import java.util.List;
 
 import static com.github.golimpio.atm.services.CashBox.cashBox;
@@ -24,7 +23,8 @@ public class Withdraw {
     @Path("/")
     @Consumes(MediaType.TEXT_PLAIN)
     public List<Cash> withdraw(long value) {
-        LOGGER.info("New withdraw: [{}]", value);
+        LOGGER.info("New withdraw: [{}]",
+                value);
 
         try {
             return cashBox().withdraw(value);
