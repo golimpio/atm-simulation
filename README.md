@@ -1,6 +1,6 @@
 # ATM Simulation Test
 
-[![Build Status](https://travis-ci.org/golimpio/recipe-finder.png?branch=master)](https://travis-ci.org/golimpio/recipe-finder)
+[![Build Status](https://travis-ci.org/golimpio/atm-simulation.png?branch=master)](https://travis-ci.org/golimpio/atm-simulation)
 
 
 ## Exercise
