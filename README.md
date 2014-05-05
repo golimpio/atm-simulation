@@ -8,7 +8,7 @@
 
 ## Exercise
 
-An application that simulates the backend logic of a cash dispensing *Automatic Teller Machine *(ATM).
+An application that simulates the backend logic of a cash dispensing *Automatic Teller Machine* (ATM).
 
 
 ### Requirements
