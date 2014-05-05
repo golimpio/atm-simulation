@@ -43,7 +43,7 @@ public enum CashBox {
         for (Cash cash: money) {
             Dispenser dispenser = box.get(cash.getNote());
             if (dispenser == null)
-                throw new AtmException("Internal error: no dispenser was found for: " + cash.getNote());
+                throw new AtmException("No dispenser was found for: " + cash.getNote(), true);
             dispenser.addNotes(cash.getNumberOfNotes());
         }
     }
@@ -86,7 +86,7 @@ public enum CashBox {
         if (value <= 0)
             throw new AtmException("Value for withdraw must be bigger than zero.");
         if (firstDispenser == null)
-            throw new AtmException("Internal error: dispensers were not initialised correctly.");
+            throw new AtmException("Dispensers were not initialised correctly.", true);
         if (value > availableMoney())
             throw new AtmException("There is no enough money to fulfill the request.");
         if (!isMultiple(value))
