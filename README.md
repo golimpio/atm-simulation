@@ -38,6 +38,28 @@ Test:
 - [Mockito - Mocking framework](https://code.google.com/p/mockito/)
 
 
+### Design patterns
+
+The design pattern used as a base for solving the cash dispenser problem was the *Chain of Responsibility*.
+
+The typical implementation of a *Chain of Resposibility* for this specific problem (ATM simulation) has a flaw, mainly because it doesn't care if the request will be fully satisfied at the time the last object in the chain handles the request.
+
+For example:
+
+Assuming that the ATM has notes of $20 and $50 only (and it has enough to fulfil the withdraw):
+
+- We want to withdraw $80 
+- There are two cash dispensers, one for $50 and other for $20 bills.
+- The first object will dispense 1 X $50
+- The second and last object will dispense 1 X $20
+- There is no object in the chain to handle the $10 balance left and it will make the request fail
+
+If the chain start with the $20 dispenser, it should work, but then another problem is introduced, because the small bills will finish a lot faster, creating an additional cost of constantly feeding the ATM.
+
+The proposed solution, is still using this design pattern, but it will check if the last object in the chain will satisfy the request (the balance must be zero):
+[Dispenser.java](https://github.com/golimpio/atm-simulation/blob/master/src/main/java/com/github/golimpio/atm/services/Dispenser.java)
+
+
 ### Target platforms
 
 - Mac OSX (tested on 10.9 Mavericks)
@@ -55,11 +77,11 @@ It should work on Linux, but it wasn't tested with OpenJDK.
 
 ### Running the application locally
 
-First build it:
+Building the application:
 
     $ mvn clean package
 
-Then run it:
+Running it:
 
     $ mvn exec:java -Dexec.mainClass="com.github.golimpio.atm.Main"
     

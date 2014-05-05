@@ -88,7 +88,7 @@ public enum CashBox {
         if (firstDispenser == null)
             throw new AtmException("Dispensers were not initialised correctly.", true);
         if (value > availableMoney())
-            throw new AtmException("There is no enough money to fulfill the request.");
+            throw new AtmException("There is no enough money to fulfil the request.");
         if (!isMultiple(value))
             throw new AtmException("Value is not multiple or a combination of available notes.");
     }
