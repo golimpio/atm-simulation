@@ -10,13 +10,22 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
+import static com.github.golimpio.atm.services.CashBox.cashBox;
+
 @Path("/init")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class Initialise {
+
     @POST
     @Path("/add")
-    public Response add(List<Cash> recipes) {
-        return null;
+    public Response add(List<Cash> money) {
+        try {
+            cashBox().add(money);
+        }
+        catch (AtmException e) {
+            e.printStackTrace();
+        }
     }
 }
+
