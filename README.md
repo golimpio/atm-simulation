@@ -76,7 +76,7 @@ You might need to give execution permission to it:
 
 The REST API can be accessed from: `http://atm-simulation-exercise.herokuapp.com/services`
 
-Or from your localhost if you're running the application loccaly: `http://localhost:8080/services`
+Or from your localhost if you're running the application locally: `http://localhost:8080/services`
 
 
 ### Services
@@ -90,7 +90,7 @@ Following the available services:
 5. **withdraw/** (withdraw cash from the ATM - *GET*)
 6. **withdraw/minimum** (retrieve the minimum withdraw allowed - *GET*)
 7. **withdraw/maximum** (retrieve the maximum withdraw allowed - *GET*)
-8. **monitor/money** (retrieve the amount available for withdraw - *GET*)
+8. **monitor/money** (retrieve the amount of notes available for withdraw - *GET*)
 
 
 ### Command line interface
@@ -187,7 +187,7 @@ or
 	{ "value":5000 }
 
 
-#### Retrieve the amount available for withdraw (8)
+#### Retrieve the amount of notes available for withdraw (8)
 
 **Request:**
 
