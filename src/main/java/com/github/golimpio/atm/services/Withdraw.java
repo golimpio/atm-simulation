@@ -37,7 +37,7 @@ public class Withdraw {
         return Response.status(Status.OK).build();
     }
 
-    @POST
+    @GET
     @Path("/minimum")
     public long minimum() {
         LOGGER.info("Retrieving minimum allowed withdraw...");
@@ -50,7 +50,7 @@ public class Withdraw {
         }
     }
 
-    @POST
+    @GET
     @Path("/maximum")
     public long maximum() {
         LOGGER.info("Retrieving maximum allowed withdraw...");
