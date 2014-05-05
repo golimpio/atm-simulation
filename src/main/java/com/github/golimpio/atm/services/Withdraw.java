@@ -1,11 +1,15 @@
 package com.github.golimpio.atm.services;
 
+import com.github.golimpio.atm.model.Amount;
+import com.github.golimpio.atm.model.Cash;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import java.util.List;
 
 import static com.github.golimpio.atm.services.CashBox.cashBox;
 import static javax.ws.rs.core.Response.Status;
@@ -16,13 +20,14 @@ import static javax.ws.rs.core.Response.Status;
 public class Withdraw {
     private static final Logger LOGGER = LoggerFactory.getLogger(Withdraw.class);
 
-    @POST
+    @GET
     @Path("/")
-    public Response withdraw(long value) {
+    @Consumes(MediaType.TEXT_PLAIN)
+    public List<Cash> withdraw(long value) {
         LOGGER.info("New withdraw: [{}]", value);
 
         try {
-            cashBox().withdraw(value);
+            return cashBox().withdraw(value);
         }
         catch (AtmException e) {
             throw new WebApplicationException(
@@ -33,16 +38,14 @@ public class Withdraw {
             throw new WebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR)
                     .entity(e.getMessage()).build());
         }
-
-        return Response.status(Status.OK).build();
     }
 
     @GET
     @Path("/minimum")
-    public long minimum() {
+    public Amount minimum() {
         LOGGER.info("Retrieving minimum allowed withdraw...");
         try {
-            return cashBox().getMinimalWithdrawValue();
+            return new Amount(cashBox().getMinimalWithdrawValue());
         }
         catch (Exception e) {
             throw new WebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR)
@@ -52,10 +55,10 @@ public class Withdraw {
 
     @GET
     @Path("/maximum")
-    public long maximum() {
+    public Amount maximum() {
         LOGGER.info("Retrieving maximum allowed withdraw...");
         try {
-            return cashBox().sumInCash();
+            return new Amount(cashBox().sumInCash());
         }
         catch (Exception e) {
             throw new WebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR)

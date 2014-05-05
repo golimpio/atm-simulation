@@ -18,7 +18,7 @@ import static javax.ws.rs.core.Response.Status;
 public class Monitor {
     private static final Logger LOGGER = LoggerFactory.getLogger(Monitor.class);
 
-    @POST
+    @GET
     @Path("/money")
     public List<Cash> money() {
         LOGGER.info("Retrieving available money...");

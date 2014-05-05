@@ -22,9 +22,7 @@ public class Cash {
     private Note note;
     private long numberOfNotes;
 
-    public Cash(Note note) {
-        this(note, 0);
-    }
+    public Cash() {}
 
     public Cash(Note note, long numberOfNotes) {
         setNote(note);
